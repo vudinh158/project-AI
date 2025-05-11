@@ -157,10 +157,9 @@ while True:
                         break
 
     # ==================== Lấy giá trị âm lượng và độ sáng ====================
-    volPer = get_current_volume() if get_current_volume(
-    ) is not None else 0  # Lấy âm lượng hệ thống
-    # Lấy độ sáng hệ thống (giá trị đầu tiên)
-    brightPer = sbc.get_brightness()[0] if sbc.get_brightness() else 0
+    volPer = get_current_volume() if get_current_volume() is not None else 0  # Lấy âm lượng hệ thống
+
+    brightPer = sbc.get_brightness()[0] if sbc.get_brightness() else 0    # Lấy độ sáng hệ thống (giá trị đầu tiên)
 
     # ==================== Giao diện thanh (chỉ hiển thị khi ở mode tương ứng) ====================
     if mode == 'volume':
@@ -184,8 +183,7 @@ while True:
 
     # ==================== Vẽ nút điều khiển ====================
     # Nút Volume
-    vol_color = (0, 255, 0) if mode == 'volume' else (
-        50, 205, 50)  # Xanh lá sáng khi active
+    vol_color = (0, 255, 0) if mode == 'volume' else (50, 205, 50)  # Xanh lá sáng khi active
     cv2.rectangle(img, (btn_volume[0], btn_volume[1]),
                   (btn_volume[2], btn_volume[3]), vol_color, cv2.FILLED)
     cv2.rectangle(img, (btn_volume[0], btn_volume[1]), (btn_volume[2],
@@ -194,8 +192,7 @@ while True:
                 cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 255), 2)
 
     # Nút Brightness
-    bright_color = (255, 215, 0) if mode == 'brightness' else (
-        255, 165, 0)  # Vàng sáng khi active
+    bright_color = (255, 215, 0) if mode == 'brightness' else (255, 165, 0)  # Vàng sáng khi active
     cv2.rectangle(img, (btn_brightness[0], btn_brightness[1]), (
         btn_brightness[2], btn_brightness[3]), bright_color, cv2.FILLED)
     cv2.rectangle(img, (btn_brightness[0], btn_brightness[1]), (
@@ -204,8 +201,7 @@ while True:
                 cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 255), 2)
 
     # Nút Keyboard
-    keyboard_color = (0, 191, 255) if mode == 'keyboard' and keyboard_visible else (
-        0, 120, 255)  # Xanh dương sáng khi active
+    keyboard_color = (0, 191, 255) if mode == 'keyboard' and keyboard_visible else (0, 120, 255)  # Xanh dương sáng khi active
     cv2.rectangle(img, (btn_keyboard[0], btn_keyboard[1]),
                   (btn_keyboard[2], btn_keyboard[3]), keyboard_color, cv2.FILLED)
     cv2.rectangle(img, (btn_keyboard[0], btn_keyboard[1]), (
