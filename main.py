@@ -22,7 +22,6 @@ GESTURES = load_gestures()
 print(GESTURES)
 gesture_model = joblib.load("gesture_model_svm.joblib")
 
-# ==================== Âm lượng ====================
 devices = AudioUtilities.GetSpeakers()
 interface = devices.Activate(IAudioEndpointVolume._iid_, CLSCTX_ALL, None)
 volume = interface.QueryInterface(IAudioEndpointVolume)
@@ -33,12 +32,10 @@ maxVol = vol_range[1]
 def get_current_volume():
     return volume.GetMasterVolumeLevelScalar() * 100
 
-# ==================== Camera ====================
 cap = cv2.VideoCapture(0)
 cap.set(3, 640)
 cap.set(4, 480)
 
-# ==================== Hand Tracker ====================
 detector = setup_hand_tracker.HandTracker(detectionCon=0.7)
 pTime, cTime = 0, 0
 vol, volBar, volPer = 0, 0, 0
@@ -68,7 +65,7 @@ def click_event(event, x, y, flags, param):
 cv2.namedWindow("Control", cv2.WINDOW_NORMAL)
 cv2.setMouseCallback("Control", click_event)
 
-# ==================== Bàn phím ảo ====================
+
 keyboard_keys = [
     "Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P",
     "A", "S", "D", "F", "G", "H", "J", "K", "L", ";",
@@ -84,8 +81,11 @@ def setup_virtual_keyboard():
     width, height = 50, 50
     margin = 10
     for i, key in enumerate(keyboard_keys):
+
         x = x_start + (i % 10) * (width + margin)
+
         y = y_start + (i // 10) * (height + margin)
+
         key_positions[key] = (x, y, width, height)
 
 def draw_virtual_keyboard(img):
@@ -120,19 +120,23 @@ while True:
 
     img = cv2.flip(img, 1)
     img = detector.handsFinder(img)
-    lmList = detector.positionFinder(img, draw=False)
 
+    lmList = detector.positionFinder(img, draw=False)
     if lmList:
         x1, y1 = lmList[4][1], lmList[4][2]
         x2, y2 = lmList[8][1], lmList[8][2]
         cx, cy = (x1 + x2) // 2, (y1 + y2) // 2
 
-        cv2.circle(img, (x1, y1), 10, (255, 255, 255), cv2.FILLED)
-        cv2.circle(img, (x2, y2), 10, (255, 255, 255), cv2.FILLED)
+        cv2.circle(img, (x1, y1), 10, (255, 255, 255),
+                   cv2.FILLED)
+        cv2.circle(img, (x2, y2), 10, (255, 255, 255),
+                   cv2.FILLED)
         cv2.line(img, (x1, y1), (x2, y2), (255, 255, 255), 3)
-        cv2.circle(img, (cx, cy), 10, (255, 255, 255), cv2.FILLED)
+        cv2.circle(img, (cx, cy), 10, (255, 255, 255),
+                   cv2.FILLED)
 
-        length = math.hypot(x2 - x1, y2 - y1)
+        length = math.hypot(lmList[8][1] - lmList[4]
+                            [1], lmList[8][2] - lmList[4][2])
 
         # Trích xuất landmark cho phân loại cử chỉ
         landmarks = []
@@ -176,13 +180,18 @@ while True:
                         cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
 
         if mode == 'volume':
+
             vol = np.interp(length, [50, 150], [minVol, maxVol])
             volBar = np.interp(volPer, [0, 100], [400, 150])
+
             volPer = np.interp(length, [50, 150], [0, 100])
             volume.SetMasterVolumeLevel(vol, None)
+
         elif mode == 'brightness':
+
             brightPer = int(np.interp(length, [50, 150], [0, 100]))
             sbc.set_brightness(brightPer)
+
         elif mode == 'keyboard':
             current_time = time.time()
             if length < 30 and (current_time - last_keypress_time) >= KEYPRESS_DELAY:
